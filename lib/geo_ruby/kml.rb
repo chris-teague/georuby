@@ -16,6 +16,7 @@ module GeoRuby
     # argument should be a valid kml geometry fragment ie. <Point> .... </Point>
     # returns the GeoRuby geometry object back
     def parse(kml)
+      geoms = []
       @factory.reset
       @with_z = false
       @parser = REXML::Parsers::PullParser.new(kml)
@@ -36,6 +37,7 @@ module GeoRuby
             accumulate_end(e)
             if(e[0] == "coordinates")
               parse_coordinates(@buffer)
+              geoms << @factory.geometry
               @buffer = "" # clear the buffer
             end
           end
@@ -45,7 +47,7 @@ module GeoRuby
           accumulate_cdata(e)
         end
       end
-      @factory.geometry.dup
+      geoms
     end
     
     private      
